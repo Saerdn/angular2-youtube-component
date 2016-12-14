@@ -1,0 +1,9 @@
+<youtube-player
+        [videoId]="id"
+        (ready)="onReady($event, id)"
+        (change)="onStateChange($event, id)"
+>
+</youtube-player>
+<br />
+<button type="button" (click)="playVideo(id)">Play</button>
+<button type="button" (click)="pauseVideo(id)">Pause</button>
