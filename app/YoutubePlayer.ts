@@ -3,6 +3,8 @@
  */
 
 import { NgZone, Injectable } from "@angular/core";
+import { isUndefined } from "util";
+
 import { YoutubeApiService } from "./youtube-api.service";
 import { PlayerConfig } from "./playerconfig.interface";
 
@@ -17,15 +19,20 @@ export class YoutubePlayer {
      * (Wrapper function to) Load a new player using the youtube JS api
      */
     load( playerConfig: PlayerConfig ) {
-        // Subscribe to the emitter who emits the window.YT OBJECT AS SOON AS IT IS LOADED/AVAILABLE.
-        // "data => window.YT" => We actually don't need to use it here, just make sure the function is called AFTER
-        // the OBJECT is available
-        this.youtubeApi.apiEmitter.subscribe(
-            data => {
-                // Using this.zone.run() causes Angular to perform change detection which will update the view
-                this.zone.run(() => this.newPlayer( playerConfig ) );
-            }
-        );
+        if( isUndefined(window.YT) ) {
+            // Subscribe to the emitter who emits the window.YT OBJECT AS SOON AS IT IS LOADED/AVAILABLE.
+            // "data => window.YT" => We actually don't need to use it here, just make sure the function is called AFTER
+            // the OBJECT is available
+            this.youtubeApi.apiEmitter.subscribe(
+                data => {
+                    // Using this.zone.run() causes Angular to perform change detection which will update the view
+                    this.zone.run(() => this.newPlayer( playerConfig ) );
+                }
+            );
+        } else {
+            // The YT class is already loaded, no need to wait for it to get streamed
+            this.zone.run(() => this.newPlayer( playerConfig ) );
+        }
     }
 
     /**

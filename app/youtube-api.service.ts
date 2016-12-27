@@ -6,7 +6,7 @@ import {Injectable, EventEmitter} from '@angular/core';
 
 @Injectable()
 export class YoutubeApiService {
-    private apiIsLoaded: boolean = false;
+    private iframeScriptId: string = "yt-iframe-api";
     public apiEmitter: EventEmitter = new EventEmitter<any>();
 
     constructor() { }
@@ -17,21 +17,20 @@ export class YoutubeApiService {
      */
     loadApi() {
         // Load API only once
-        if( this.apiIsLoaded == false ) {
-            // Load api
+        if( window.document.getElementById(this.iframeScriptId) == null ) {
+            // Create scripte element and load API
             let apiScriptTag = window.document.createElement("script");
             apiScriptTag.type = "text/javascript";
             apiScriptTag.src = "https://www.youtube.com/iframe_api";
+            apiScriptTag.id = this.iframeScriptId;
             window.document.body.appendChild(apiScriptTag);
+        } // END OF if( window.document.getElementById(this.iframeScriptId) == null ) { ... }
 
-            // Stream the YT code (which contains the js youtube framework)
-            // Notice: window.YT.Player needs to be initialized WITHIN the scope of onYouTubeIframeAPIReady
-            window['onYouTubeIframeAPIReady'] = () => {
-                // Emit the youtube player Object so it can be used by all subscribing players
-                this.apiEmitter.emit(window.YT);
-            };
-        } else {
-            this.apiIsLoaded = true;
-        }
+        // Stream the YT code (which contains the js youtube framework)
+        // Notice: window.YT.Player needs to be initialized WITHIN the scope of onYouTubeIframeAPIReady
+        window['onYouTubeIframeAPIReady'] = () => {
+            // Emit the youtube player Object so it can be used by all subscribing players
+            this.apiEmitter.emit(window.YT);
+        };
     }
 }
