@@ -11,8 +11,8 @@ Usage:
 >
 </youtube-player>
 <br />
-<button type="button" class="btn btn-default" (click)="playVideo(id)">Play</button>
-<button type="button" class="btn btn-default" (click)="pauseVideo(id)">Pause</button>
+<button type="button" (click)="playVideo(id)">Play</button>
+<button type="button" (click)="pauseVideo(id)">Pause</button>
 ```
 
 Just copy the Youtube component to your app and implement it as seen
